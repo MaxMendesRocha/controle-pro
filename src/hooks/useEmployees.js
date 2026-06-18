@@ -1,43 +1,116 @@
 import useLocalStorage from "./useLocalStorage";
 
 export default function useEmployees() {
-  const [employees, setEmployees] = useLocalStorage(
+
+  const [
+    employees,
+    setEmployees
+  ] = useLocalStorage(
     "employees",
     []
   );
 
-  const addEmployee = (employee) => {
+  const normalizeEmployee = (
+    employee
+  ) => {
+
+    return {
+      ...employee,
+
+      hasBreak:
+        employee.hasBreak ??
+        false,
+
+      valeTransporte: {
+        enabled:
+          employee
+            ?.valeTransporte
+            ?.enabled ??
+          false,
+
+        percentual:
+          employee
+            ?.valeTransporte
+            ?.percentual ??
+          6
+      }
+    };
+  };
+
+  const addEmployee = (
+    employee
+  ) => {
+
+    const newEmployee =
+      normalizeEmployee({
+        ...employee,
+        id: Date.now()
+      });
+
     setEmployees([
       ...employees,
-      {
-        ...employee,
-        id: Date.now(),
-      },
+      newEmployee
     ]);
   };
 
-  const updateEmployee = (id, data) => {
+  const updateEmployee = (
+    id,
+    updatedEmployee
+  ) => {
+
+    const normalized =
+      normalizeEmployee(
+        updatedEmployee
+      );
+
     setEmployees(
-      employees.map((emp) =>
-        emp.id === id
-          ? { ...emp, ...data }
-          : emp
+      employees.map(
+        employee =>
+          employee.id === id
+            ? {
+                ...employee,
+                ...normalized,
+                id
+              }
+            : employee
       )
     );
   };
 
-  const deleteEmployee = (id) => {
+  const deleteEmployee = (
+    id
+  ) => {
+
     setEmployees(
       employees.filter(
-        (emp) => emp.id !== id
+        employee =>
+          employee.id !== id
       )
+    );
+  };
+
+  const getEmployeeById = (
+    id
+  ) => {
+
+    return employees.find(
+      employee =>
+        employee.id === id
     );
   };
 
   return {
-    employees,
+    employees:
+      employees.map(
+        normalizeEmployee
+      ),
+
     addEmployee,
+
     updateEmployee,
+
     deleteEmployee,
+
+    getEmployeeById
   };
 }

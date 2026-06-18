@@ -1,24 +1,30 @@
 import { useState } from "react";
 
 import EmployeeForm from "../components/EmployeeForm";
-import EmployeeTable from "../components/EmployeeTable";
+import EmployeeCard from "../components/EmployeeCard";
 import ConfirmDialog from "../components/ConfirmDialog";
 
 import useEmployees from "../hooks/useEmployees";
+
+import PageTitle from "../components/PageTitle";
 
 export default function Employees() {
   const {
     employees,
     addEmployee,
     updateEmployee,
-    deleteEmployee,
+    deleteEmployee
   } = useEmployees();
 
-  const [editing,
-    setEditing] = useState(null);
+  const [
+    editing,
+    setEditing
+  ] = useState(null);
 
-  const [removing,
-    setRemoving] = useState(null);
+  const [
+    removing,
+    setRemoving
+  ] = useState(null);
 
   const saveEmployee = (
     employee
@@ -37,24 +43,67 @@ export default function Employees() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold">
-        Funcionários
-      </h2>
+      <PageTitle
+        title="Funcionários"
+        subtitle="Gerencie os colaboradores cadastrados"
+      />
 
-      <div className="bg-white rounded-xl shadow p-6">
+      <div
+        className="
+        bg-white
+        dark:bg-slate-900
+
+        rounded-xl
+        shadow-sm
+
+        p-6
+        "
+      >
         <EmployeeForm
           employee={editing}
           onSave={saveEmployee}
         />
       </div>
 
-      <div className="bg-white rounded-xl shadow p-6">
-        <EmployeeTable
-          employees={employees}
-          onEdit={setEditing}
-          onDelete={setRemoving}
-        />
-      </div>
+      {employees.length === 0 ? (
+        <div
+          className="
+          bg-white
+          dark:bg-slate-900
+
+          rounded-xl
+
+          p-10
+
+          text-center
+          "
+        >
+          Nenhum funcionário cadastrado.
+        </div>
+      ) : (
+        <div
+          className="
+          grid
+
+          grid-cols-1
+          md:grid-cols-2
+          xl:grid-cols-3
+
+          gap-4
+          "
+        >
+          {employees.map(
+            employee => (
+              <EmployeeCard
+                key={employee.id}
+                employee={employee}
+                onEdit={setEditing}
+                onDelete={setRemoving}
+              />
+            )
+          )}
+        </div>
+      )}
 
       <ConfirmDialog
         open={!!removing}

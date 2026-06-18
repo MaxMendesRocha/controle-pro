@@ -3,30 +3,44 @@ export const parseTime = (
 ) => {
   if (!timeString) return 0;
 
-  const [h, m] =
+  const [hours, minutes] =
     timeString
       .split(":")
       .map(Number);
 
-  return h + m / 60;
+  return (
+    hours +
+    minutes / 60
+  );
 };
 
 export const formatHours = (
   decimalHours
 ) => {
-  const h =
-    Math.floor(decimalHours);
 
-  const m =
+  if (
+    decimalHours === null ||
+    decimalHours === undefined
+  ) {
+    return "00:00";
+  }
+
+  const totalMinutes =
     Math.round(
-      (decimalHours - h) * 60
+      decimalHours * 60
     );
 
-  return `${String(h).padStart(
-    2,
-    "0"
-  )}:${String(m).padStart(
-    2,
-    "0"
-  )}`;
+  const hours =
+    Math.floor(
+      totalMinutes / 60
+    );
+
+  const minutes =
+    totalMinutes % 60;
+
+  return `${String(
+    hours
+  ).padStart(2, "0")}:${String(
+    minutes
+  ).padStart(2, "0")}`;
 };
